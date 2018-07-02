@@ -39,8 +39,16 @@ updateFeed = () ->
         ).on("error", reject)
     ))
 
-    # update price in TestKyberNetwork smart contract
     console.log data
+
+    # update price in TestKyberNetwork smart contract
+    tx = await account.signTransaction({
+        to: account.address
+        gas: 100000 + data.ETH.DAI // 1
+    })
+    web3.eth.sendSignedTransaction(tx.rawTransaction)
+    .on("transactionHash", console.log)
+    .on("receipt", console.log)
 
     updateFeed()
 
