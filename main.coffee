@@ -2,11 +2,11 @@
 https = require "https"
 Web3 = require "web3"
 web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/m7Pdc77PjIwgmp7t0iKI"))
-config = require "config"
+config = require "./config.json"
 
 # import Ethereum account
-key = require "./key"
-password = require "./password"
+key = require "./key.json"
+password = (require "./password").password
 account = web3.eth.accounts.decrypt(key, password)
 
 wait = (time) ->
@@ -15,20 +15,30 @@ wait = (time) ->
             setTimeout(resolve, time)
     )
 
-while true
+updateFeed = () ->
     # wait for block to be mined
-    waitTime = 2.5 * 60 * 1000 # 2.5 minutes in milliseconds
+    waitTime = 10000 # 2.5 minutes in milliseconds
     await wait(waitTime)
 
     # fetch prices
     apiStr = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=" +
         config.tokens.join() + "&tsyms=DAI"
-    https.get(apiStr, (res) ->
-        res.on("data", (data) ->
-            console.log data
-        )
-    ).on("error", (error) ->
-        console.log error
-    )
+    data = await (new Promise((resolve, reject) ->
+        https.get(apiStr, (res) ->
+            data = ""
+            res.on("data", (chunk) ->
+                data += chunk
+            )
+            res.on("end", () ->
+                parsedData = JSON.parse(data)
+                resolve(parsedData)
+            )
+        ).on("error", reject)
+    ))
 
-    # update price feed
+    # update price in TestKyberNetwork smart contract
+    console.log data
+
+    updateFeed()
+
+updateFeed()
