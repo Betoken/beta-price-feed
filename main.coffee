@@ -28,22 +28,32 @@ updateFeed = () ->
         config.tokens.join() + "&tsyms=DAI"
     data = await (new Promise((resolve, reject) ->
         https.get(apiStr, (res) ->
-            data = ""
+            rawData = ""
             res.on("data", (chunk) ->
-                data += chunk
+                rawData += chunk
             )
             res.on("end", () ->
-                parsedData = JSON.parse(data)
+                parsedData = JSON.parse(rawData)
                 resolve(parsedData)
             )
         ).on("error", reject)
     ))
 
-    console.log data
+    ###
+        data takes the following format:
+        {
+            ETH: {
+                DAI: 450
+            },
+            OMG: {
+                DAI: 0.123
+            }
+        }
+    ###
 
     # update price in TestKyberNetwork smart contract
     tx = await account.signTransaction({
-        to: account.address
+        to: config.kyber_address
         gas: 100000 + data.ETH.DAI // 1
     })
     web3.eth.sendSignedTransaction(tx.rawTransaction)
