@@ -24,7 +24,7 @@ wait = (time) ->
 # main function
 updateFeed = () ->
     # wait for block to be mined
-    waitTime = 2.5 * 60 * 1000 # 2.5 minutes in milliseconds
+    waitTime = 0#2.5 * 60 * 1000 # 2.5 minutes in milliseconds
     await wait(waitTime)
 
     # fetch prices
@@ -42,8 +42,7 @@ updateFeed = () ->
             )
         ).on("error", reject)
     ))
-    tokenPrices = config.tokens.map((token) -> data.token.DAI * config.precision)
-
+    tokenPrices = config.tokens.map((token) -> data[token].DAI * config.precision)
     ###
         data takes the following format:
         {
