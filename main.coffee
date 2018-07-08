@@ -24,7 +24,7 @@ wait = (time) ->
 # main function
 updateFeed = () ->
     # wait for block to be mined
-    waitTime = 0#2.5 * 60 * 1000 # 2.5 minutes in milliseconds
+    waitTime = 2.5 * 60 * 1000 # 2.5 minutes in milliseconds
     await wait(waitTime)
 
     # fetch prices
