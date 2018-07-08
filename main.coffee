@@ -5,6 +5,10 @@ infuraKey = (require "./infura_key.json").key
 web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/" + infuraKey))
 config = require "./config.json"
 
+# load KyberNetwork contract interface
+abi = require("./TestKyberNetwork.json").abi
+TestKyberNetwork = new web3.eth.Contract(abi, config.kyber_address)
+
 # import Ethereum account
 key = require "./key.json"
 password = (require "./password").password
@@ -38,6 +42,7 @@ updateFeed = () ->
             )
         ).on("error", reject)
     ))
+    tokenPrices = config.tokens.map((token) -> data.token.DAI * config.precision)
 
     ###
         data takes the following format:
@@ -52,14 +57,17 @@ updateFeed = () ->
     ###
 
     # update price in TestKyberNetwork smart contract
+    txData = TestKyberNetwork.methods.setAllTokenPrices(config.tokens, tokenPrices).encodeABI()
     tx = await account.signTransaction({
         to: config.kyber_address
-        gas: 100000 + data.ETH.DAI // 1
+        gas: 6000000
+        data: txData
     })
     web3.eth.sendSignedTransaction(tx.rawTransaction)
     .on("transactionHash", console.log)
     .on("receipt", console.log)
 
+    # recurse to simulate an infinite loop
     updateFeed()
 
 updateFeed()

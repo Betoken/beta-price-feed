@@ -35,5 +35,6 @@
         "CENNZ",
         "DAI"
     ],
-    "kyber_address": "0xded"
+    "kyber_address": "0xded",
+    "precision": 1e18
 }
