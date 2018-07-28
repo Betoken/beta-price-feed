@@ -6,7 +6,6 @@
         "BAT",
         "BBO",
         "BLZ",
-        "EDU",
         "ELEC",
         "ELF",
         "ENJ",
@@ -27,6 +26,7 @@
         "ZIL",
         "DAI"
     ],
-    "kyber_address": "0xded",
+    "kyber_address": "0x7f4523445213B3F7A7077e6C23409dc17B016d6A",
+    "factory_address": "0xd851E722234c01780d52ABd71FE1d359B49268d1",
     "precision": 1e18
 }
